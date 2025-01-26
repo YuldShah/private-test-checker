@@ -6,11 +6,29 @@ def init_db():
     conn = sqlite3.connect('main.db')
     c = conn.cursor()
     c.execute('CREATE TABLE IF NOT EXISTS user_states (telegram_id INTEGER PRIMARY KEY, status TEXT)')
-    c.execute('CREATE TABLE IF NOT EXISTS user_results (user_id INTEGER PRIMARY KEY, test INTEGER, score INTEGER)')
+    c.execute('CREATE TABLE IF NOT EXISTS user_results (user_id INTEGER PRIMARY KEY, test INTEGER, score INTEGER, datetime DATETIME DEFAULT CURRENT_TIMESTAMP)')
     c.execute('CREATE TABLE IF NOT EXISTS user_tokens (user_id INTEGER PRIMARY KEY, token TEXT)')
     c.execute('CREATE TABLE IF NOT EXISTS user_sessions (telegram_id INTEGER PRIMARY KEY, user_id INTEGER)')
     conn.commit()
     conn.close()
+
+
+def get_user_results():
+    conn = sqlite3.connect('main.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM user_results')
+    results = c.fetchall()
+    conn.close()
+    return results
+
+
+def get_user_tokens():
+    conn = sqlite3.connect('main.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM user_tokens')
+    tokens = c.fetchall()
+    conn.close()
+    return tokens
 
 
 def get_user_state(telegram_id):

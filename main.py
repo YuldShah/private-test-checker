@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 import telebot
 from telebot import types
 from db_manager import *
@@ -17,6 +17,28 @@ def getMessage():
     update = telebot.types.Update.de_json(json_string)
     bot.process_new_updates([update])
     return '!', 200
+
+
+@app.route('/results')
+def getResults():
+    return get_user_results()
+
+
+@app.route('/tokens')
+def getTokens():
+    return get_user_tokens()
+
+
+@app.route('/generate_tokens/<int:n>')
+def generateTokens(n):
+    generate_tokens(n)
+    return redirect(url_for('getTokens'))
+
+
+@app.route('/add_tokens/<int:last>/<int:n>')
+def addTokens(last, n):
+    add_tokens(last, n)
+    return redirect(url_for('getTokens'))
 
 
 @bot.message_handler(commands=['start'])
