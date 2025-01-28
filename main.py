@@ -56,8 +56,10 @@ def get_results_command(message):
         
         # Write data
         for row_num, row_data in enumerate(results, start=1):
-            for col_num, cell_data in enumerate(row_data):
-                worksheet.write(row_num, col_num, cell_data)
+            worksheet.write(row_num, 0, row_data[0])  # User ID
+            worksheet.write(row_num, 1, row_data[1])  # Test
+            worksheet.write(row_num, 2, row_data[2])  # Score
+            worksheet.write(row_num, 3, row_data[3])  # Datetime
         
         workbook.close()
         
