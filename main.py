@@ -20,7 +20,7 @@ def generate_tokens_command(message):
             num_tokens = int(message.text.split()[1])
             tokens = generate_tokens(num_tokens)
             # tokens = get_user_tokens()
-            token_list = "\n".join([token[1] for token in tokens])
+            token_list = "\n".join([token for token in tokens])
             with open("tokens.txt", "w") as file:
                 file.write(token_list)
             with open("tokens.txt", "rb") as file:
