@@ -11,6 +11,23 @@ tests = [str(i) for i in range(1, number_of_tests + 1)]
 bot = telebot.TeleBot(API_TOKEN)
 answers = {}
 
+@bot.message_handler(commands=['token'])
+def generate_tokens_command(message):
+    if str(message.from_user.id) in ADMINS:
+        try:
+            num_tokens = int(message.text.split()[1])
+            generate_tokens(num_tokens)
+            tokens = get_user_tokens()
+            token_list = "\n".join([token[1] for token in tokens])
+            with open("tokens.txt", "w") as file:
+                file.write(token_list)
+            with open("tokens.txt", "rb") as file:
+                bot.send_document(message.chat.id, file)
+        except (IndexError, ValueError):
+            bot.send_message(message.chat.id, "Iltimos, to'g'ri formatda raqam kiriting: /token <soni>")
+    else:
+        bot.send_message(message.chat.id, "Sizda bu buyruqni bajarish uchun ruxsat yo'q.")
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(message.chat.id, "Token kalitingizni kiriting (Token kalit olmagan bo'lsangiz @satelbekadmin):")
@@ -30,23 +47,6 @@ def token_handler(message):
         setup_user_session(message.from_user.id, user_id)
     else:
         bot.send_message(message.chat.id, "Token qabul qilinmadi. Token kiriting:")
-
-@bot.message_handler(commands=['token'])
-def generate_tokens_command(message):
-    if str(message.from_user.id) in ADMINS:
-        try:
-            num_tokens = int(message.text.split()[1])
-            generate_tokens(num_tokens)
-            tokens = get_user_tokens()
-            token_list = "\n".join([token[1] for token in tokens])
-            with open("tokens.txt", "w") as file:
-                file.write(token_list)
-            with open("tokens.txt", "rb") as file:
-                bot.send_document(message.chat.id, file)
-        except (IndexError, ValueError):
-            bot.send_message(message.chat.id, "Iltimos, to'g'ri formatda raqam kiriting: /token <soni>")
-    else:
-        bot.send_message(message.chat.id, "Sizda bu buyruqni bajarish uchun ruxsat yo'q.")
 
 @bot.callback_query_handler(func=lambda callback: True)
 def test_selection_callback_handler(callback):
