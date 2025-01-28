@@ -74,6 +74,13 @@ def send_welcome(message):
     bot.send_message(message.chat.id, "Token kalitingizni kiriting (Token kalit olmagan bo'lsangiz @satelbekadmin):")
     set_user_state(message.from_user.id, 'login')
 
+@bot.message_handler(commands=['help'])
+def send_welcome(message):
+    if message.chat.id in ADMINS:
+        bot.send_message(message.chat.id, "/start - Start submitting your answers\n\n/token <number> - Generate <number> of tokens and get newly generated tokens\n\n/getall - Get all tokens\n\n/results - Get all results")
+    else:
+        bot.send_message(message.chat.id, "/start - Testlarga javoblarini yuborishni boshlash")
+
 @bot.message_handler(func=lambda message: get_user_state(message.from_user.id) == 'login', content_types=['text'])
 def token_handler(message):
     user_token = message.text
