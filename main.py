@@ -105,8 +105,8 @@ def test_selection_callback_handler(callback):
             del answers[f'{callback.message.chat.id}.{topic}']
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
         bot.send_message(callback.message.chat.id, f'{definition}*{topic} testning natijasi: {score} / {len(answers_for_test[int(topic) - 1])}*', parse_mode='Markdown')
-        user_id = get_user_session_info(callback.message.chat.id)
-        add_result(user_id, topic, score)
+        # user_id = get_user_session_info()
+        add_result(callback.message.chat.id, topic, score)
         markup = types.InlineKeyboardMarkup(row_width=2)
         buttons = [types.InlineKeyboardButton(text=item, callback_data=item) for item in tests]
         markup.add(*buttons)
