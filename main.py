@@ -13,17 +13,21 @@ bot = telebot.TeleBot(API_TOKEN)
 answers = {}
 
 
-@bot.message_handler(commands=['find'])
-def find_user_id_of_token(message):
-    bot.send_message(message.chat.id, "Tokenni kiriting:")
-    set_user_state(message.from_user.id, 'find')
 
-@bot.message_handler(func=lambda message: get_user_state(message.from_user.id) == 'find', content_types=['text'])
+# def find_user_id_of_token(message):
+#     bot.send_message(message.chat.id, "Tokenni kiriting:")
+#     set_user_state(message.from_user.id, 'find')
+
+@bot.message_handler(commands=['find'])
 def return_user_id(message):
-    user_token = message.text
+    try:
+        user_token = message.text.split()[1]
+    except IndexError:
+        bot.send_message(message.chat.id, "Iltimos, to'g'ri formatda token kiriting: /find <token>")
+        return
     user_id = get_user_id(user_token)
     if user_id is not None:
-        bot.send_message(message.chat.id, f"Token: {user_token}\nUser ID: {user_id}")
+        bot.send_message(message.chat.id, f"User ID: {user_id}")
     else:
         bot.send_message(message.chat.id, "Token topilmadi.")
     set_user_state(message.from_user.id, '')
@@ -93,7 +97,7 @@ def send_welcome(message):
 @bot.message_handler(commands=['help'])
 def send_welcome(message):
     if str(message.chat.id) in ADMINS:
-        bot.send_message(message.chat.id, "/start - Start submitting your answers\n\n/token <number> - Generate <number> of tokens and get newly generated tokens\n\n/getall - Get all tokens\n\n/results - Get all results")
+        bot.send_message(message.chat.id, "/start - Start submitting your answers\n\n/token <number> - Generate <number> of tokens and get newly generated tokens\n\n/find <token> - Get User ID\n\n/getall - Get all tokens\n\n/results - Get all results")
     else:
         bot.send_message(message.chat.id, "/start - Testlarga javoblarini yuborishni boshlash")
 
