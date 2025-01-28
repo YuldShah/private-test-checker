@@ -18,9 +18,9 @@ def generate_tokens_command(message):
     if str(message.from_user.id) in ADMINS:
         try:
             num_tokens = int(message.text.split()[1])
-            token_list = generate_tokens(num_tokens)
+            tokens = generate_tokens(num_tokens)
             # tokens = get_user_tokens()
-            #  = "\n".join([token[1] for token in tokens])
+            token_list = "\n".join([token[1] for token in tokens])
             with open("tokens.txt", "w") as file:
                 file.write(token_list)
             with open("tokens.txt", "rb") as file:
@@ -76,7 +76,7 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def send_welcome(message):
-    if message.chat.id in ADMINS:
+    if str(message.chat.id) in ADMINS:
         bot.send_message(message.chat.id, "/start - Start submitting your answers\n\n/token <number> - Generate <number> of tokens and get newly generated tokens\n\n/getall - Get all tokens\n\n/results - Get all results")
     else:
         bot.send_message(message.chat.id, "/start - Testlarga javoblarini yuborishni boshlash")
