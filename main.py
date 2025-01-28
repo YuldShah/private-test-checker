@@ -121,5 +121,5 @@ def test_selection_callback_handler(callback):
 
 if __name__ == "__main__":
     init_db()
-    bot.delete_webhook()
+    bot.delete_webhook(drop_pending_updates=True)
     bot.polling(none_stop=True)
