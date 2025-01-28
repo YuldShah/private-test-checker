@@ -45,7 +45,8 @@ def set_user_state(user_id, state):
     r.set(f"user_state:{user_id}", state)
 
 def generate_tokens(n):
-    for i in range(1, n + 1):
+    num = len(list(r.scan_iter("user_token:*")))
+    for i in range(num, n + num):
         token = str(uuid.uuid4())
         r.set(f"user_token:{i}", token)
 
