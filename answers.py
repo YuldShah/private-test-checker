@@ -1,1 +1,1 @@
-answers_for_test = [['A' for j in range(30)] for i in range(20)]
+answers_for_test = ['A', 'B', 'D', 'D', 'B', 'C', 'B', 'D', 'A', 'D', 'C', 'B', 'C', 'B', 'C', 'D', 'B', 'C', 'D', 'B', 'A', 'D', 'C', 'B', 'C', 'B']
