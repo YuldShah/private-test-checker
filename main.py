@@ -90,20 +90,22 @@ def test_selection_callback_handler(callback):
         bot.send_message(callback.message.chat.id, "Mavzuni tanlang:", reply_markup=markup)
     elif dots == 0:
         topic = callback.data
-        markup = types.InlineKeyboardMarkup(row_width=3)
-        buttons = []
-        for item in range(1, len(answers_for_test[int(topic) - 1]) + 1):
-            char = f"🔴 {item}"
-            if answers.get(f'{callback.message.chat.id}.{topic}', {}).get(f'{item}') is not None:
-                char = f"🟢 {item}"
-            buttons.append(types.InlineKeyboardButton(text=char, callback_data=f"{topic}.{item}"))
-        markup.add(*buttons)
-        markup.add(types.InlineKeyboardButton(text="Testni tugatish", callback_data=f"submit-{topic}"))
-        bot.delete_message(callback.message.chat.id, callback.message.message_id)
         if os.path.exists(f'tests/{topic}.pdf'):
+            markup = types.InlineKeyboardMarkup(row_width=3)
+            buttons = []
+            for item in range(1, len(answers_for_test[int(topic) - 1]) + 1):
+                char = f"🔴 {item}"
+                if answers.get(f'{callback.message.chat.id}.{topic}', {}).get(f'{item}') is not None:
+                    char = f"🟢 {item}"
+                buttons.append(types.InlineKeyboardButton(text=char, callback_data=f"{topic}.{item}"))
+            markup.add(*buttons)
+            markup.add(types.InlineKeyboardButton(text="Testni tugatish", callback_data=f"submit-{topic}"))
+            bot.delete_message(callback.message.chat.id, callback.message.message_id)
             with open(f'tests/{topic}.pdf', 'rb') as file:
                 bot.send_document(callback.message.chat.id, file)
-        bot.send_message(callback.message.chat.id, f"{topic} testning savolini tanlang:", reply_markup=markup)
+            bot.send_message(callback.message.chat.id, f"{topic} testning savolini tanlang:", reply_markup=markup)
+        else:
+            bot.send_message(callback.message.chat.id, f"Test hozircha yopiq.")
     elif dots == 1:
         topic, test = callback.data.split('.')
         markup = types.InlineKeyboardMarkup(row_width=4)
