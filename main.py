@@ -1,3 +1,4 @@
+import os.path
 from flask import Flask, request, redirect, url_for
 import telebot
 from telebot import types
@@ -5,8 +6,7 @@ from db_manager import *
 from answers import *
 
 API_TOKEN = ''
-number_of_tests = 20
-number_of_questions = 30
+number_of_tests = len(answers_for_test)
 tests = [str(i) for i in range(1, number_of_tests + 1)]
 bot = telebot.TeleBot(API_TOKEN)
 app = Flask(__name__)
@@ -73,7 +73,7 @@ def test_selection_callback_handler(callback):
         score = 0
         definition = ''
         if answers.get(f'{callback.message.chat.id}.{topic}') is not None:
-            for i in answers[f'{callback.message.chat.id}.{topic}'].keys():
+            for i in sorted(answers[f'{callback.message.chat.id}.{topic}'].keys()):
                 if answers_for_test[int(topic) - 1][int(i) - 1] == answers[f'{callback.message.chat.id}.{topic}'][i]:
                     definition += f'{i}. 🟢\n'
                     score += 1
@@ -81,7 +81,7 @@ def test_selection_callback_handler(callback):
                     definition += f'{i}. 🔴\n'
             del answers[f'{callback.message.chat.id}.{topic}']
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
-        bot.send_message(callback.message.chat.id, f'{definition}*{topic} testning natijasi: {score} / {number_of_questions}*', parse_mode='Markdown')
+        bot.send_message(callback.message.chat.id, f'{definition}*{topic} testning natijasi: {score} / {len(answers_for_test[int(topic) - 1])}*', parse_mode='Markdown')
         user_id = get_user_session_info(callback.message.chat.id)
         add_result(user_id, topic, score)
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -92,7 +92,7 @@ def test_selection_callback_handler(callback):
         topic = callback.data
         markup = types.InlineKeyboardMarkup(row_width=3)
         buttons = []
-        for item in range(1, number_of_questions + 1):
+        for item in range(1, len(answers_for_test[int(topic) - 1]) + 1):
             char = f"🔴 {item}"
             if answers.get(f'{callback.message.chat.id}.{topic}', {}).get(f'{item}') is not None:
                 char = f"🟢 {item}"
@@ -100,8 +100,9 @@ def test_selection_callback_handler(callback):
         markup.add(*buttons)
         markup.add(types.InlineKeyboardButton(text="Testni tugatish", callback_data=f"submit-{topic}"))
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
-        with open(f'tests/{topic}.pdf', 'rb') as file:
-            bot.send_document(callback.message.chat.id, file)
+        if os.path.exists(f'tests/{topic}.pdf'):
+            with open(f'tests/{topic}.pdf', 'rb') as file:
+                bot.send_document(callback.message.chat.id, file)
         bot.send_message(callback.message.chat.id, f"{topic} testning savolini tanlang:", reply_markup=markup)
     elif dots == 1:
         topic, test = callback.data.split('.')
@@ -124,7 +125,7 @@ def test_selection_callback_handler(callback):
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
         markup = types.InlineKeyboardMarkup(row_width=3)
         buttons = []
-        for item in range(1, number_of_questions + 1):
+        for item in range(1, len(answers_for_test[int(topic) - 1]) + 1):
             char = f"🔴 {item}"
             if answers.get(f'{callback.message.chat.id}.{topic}', {}).get(f'{item}') is not None:
                 char = f"🟢 {item}"
@@ -138,5 +139,4 @@ if __name__ == "__main__":
     init_db()
     bot.remove_webhook()
     bot.set_webhook(url='/')
-    generate_tokens(1)
     app.run()
