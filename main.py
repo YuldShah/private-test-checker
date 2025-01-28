@@ -12,6 +12,22 @@ tests = [str(i) for i in range(1, number_of_tests + 1)]
 bot = telebot.TeleBot(API_TOKEN)
 answers = {}
 
+
+@bot.message_handler(commands=['find'])
+def find_user_id_of_token(message):
+    bot.send_message(message.chat.id, "Tokenni kiriting:")
+    set_user_state(message.from_user.id, 'find')
+
+@bot.message_handler(func=lambda message: get_user_state(message.from_user.id) == 'find', content_types=['text'])
+def return_user_id(message):
+    user_token = message.text
+    user_id = get_user_id(user_token)
+    if user_id is not None:
+        bot.send_message(message.chat.id, f"Token: {user_token}\nUser ID: {user_id}")
+    else:
+        bot.send_message(message.chat.id, "Token topilmadi.")
+    set_user_state(message.from_user.id, '')
+
 @bot.message_handler(commands=['token'])
 def generate_tokens_command(message):
     print(f"{ADMINS}")
