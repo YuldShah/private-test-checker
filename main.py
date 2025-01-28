@@ -29,6 +29,18 @@ def generate_tokens_command(message):
     else:
         bot.send_message(message.chat.id, "Sizda bu buyruqni bajarish uchun ruxsat yo'q.")
 
+@bot.message_handler(commands=['getall'])
+def get_all_tokens_command(message):
+    if str(message.from_user.id) in ADMINS:
+        tokens = get_user_tokens()
+        token_list = "\n".join([token[1] for token in tokens])
+        with open("all_tokens.txt", "w") as file:
+            file.write(token_list)
+        with open("all_tokens.txt", "rb") as file:
+            bot.send_document(message.chat.id, file)
+    else:
+        bot.send_message(message.chat.id, "Sizda bu buyruqni bajarish uchun ruxsat yo'q.")
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(message.chat.id, "Token kalitingizni kiriting (Token kalit olmagan bo'lsangiz @satelbekadmin):")
