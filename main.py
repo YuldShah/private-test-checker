@@ -50,16 +50,17 @@ def get_results_command(message):
         worksheet = workbook.add_worksheet()
         
         # Write headers
-        headers = ['User ID', 'Test', 'Score', 'Datetime']
+        headers = ['User ID', 'Telegram ID', 'Test', 'Score', 'Datetime']
         for col_num, header in enumerate(headers):
             worksheet.write(0, col_num, header)
         
         # Write data
         for row_num, row_data in enumerate(results, start=1):
             worksheet.write(row_num, 0, row_data[0])  # User ID
-            worksheet.write(row_num, 1, row_data[1])  # Test
-            worksheet.write(row_num, 2, row_data[2])  # Score
-            worksheet.write(row_num, 3, row_data[3])  # Datetime
+            worksheet.write(row_num, 1, row_data[1])  # Telegram ID
+            worksheet.write(row_num, 2, row_data[2])  # Test
+            worksheet.write(row_num, 3, row_data[3])  # Score
+            worksheet.write(row_num, 4, row_data[4])  # Datetime
         
         workbook.close()
         
@@ -105,8 +106,8 @@ def test_selection_callback_handler(callback):
             del answers[f'{callback.message.chat.id}.{topic}']
         bot.delete_message(callback.message.chat.id, callback.message.message_id)
         bot.send_message(callback.message.chat.id, f'{definition}*{topic} testning natijasi: {score} / {len(answers_for_test[int(topic) - 1])}*', parse_mode='Markdown')
-        # user_id = get_user_session_info()
-        add_result(callback.message.chat.id, topic, score)
+        user_id = get_user_session_info(callback.message.chat.id)
+        add_result(user_id, callback.message.chat.id, topic, score)
         markup = types.InlineKeyboardMarkup(row_width=2)
         buttons = [types.InlineKeyboardButton(text=item, callback_data=item) for item in tests]
         markup.add(*buttons)

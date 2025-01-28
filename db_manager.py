@@ -21,6 +21,7 @@ def get_user_results():
         result = r.hgetall(key)
         results.append((
             result["user_id"],
+            result["tg_id"],
             result["test"],
             result["score"],
             result["datetime"]
@@ -62,10 +63,11 @@ def setup_user_session(telegram_id, user_id):
 def get_user_session_info(telegram_id):
     return r.get(f"user_session:{telegram_id}")
 
-def add_result(user_id, test, score):
+def add_result(user_id, telegram_id, test, score):
     result_id = str(uuid.uuid4())
     r.hmset(f"user_result:{result_id}", {
         "user_id": user_id,
+        "tg_id": telegram_id,
         "test": test,
         "score": score,
         "datetime": str(datetime.now())
