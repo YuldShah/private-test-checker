@@ -103,4 +103,5 @@ def test_selection_callback_handler(callback):
 
 if __name__ == "__main__":
     init_db()
+    bot.remove_webhook()
     bot.polling(none_stop=True)
