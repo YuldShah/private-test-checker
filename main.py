@@ -13,6 +13,7 @@ answers = {}
 
 @bot.message_handler(commands=['token'])
 def generate_tokens_command(message):
+    print(f"{ADMINS}")
     if str(message.from_user.id) in ADMINS:
         try:
             num_tokens = int(message.text.split()[1])
