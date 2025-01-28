@@ -3,6 +3,7 @@ import telebot
 from telebot import types
 from db_manager import *
 from answers import *
+import xlsxwriter
 
 API_TOKEN = os.getenv('API_TOKEN', '')
 ADMINS = list(os.getenv('ADMINS', '').split(','))
@@ -37,6 +38,30 @@ def get_all_tokens_command(message):
         with open("all_tokens.txt", "w") as file:
             file.write(token_list)
         with open("all_tokens.txt", "rb") as file:
+            bot.send_document(message.chat.id, file)
+    else:
+        bot.send_message(message.chat.id, "Sizda bu buyruqni bajarish uchun ruxsat yo'q.")
+
+@bot.message_handler(commands=['results'])
+def get_results_command(message):
+    if str(message.from_user.id) in ADMINS:
+        results = get_user_results()
+        workbook = xlsxwriter.Workbook('results.xlsx')
+        worksheet = workbook.add_worksheet()
+        
+        # Write headers
+        headers = ['User ID', 'Test', 'Score', 'Datetime']
+        for col_num, header in enumerate(headers):
+            worksheet.write(0, col_num, header)
+        
+        # Write data
+        for row_num, row_data in enumerate(results, start=1):
+            for col_num, cell_data in enumerate(row_data):
+                worksheet.write(row_num, col_num, cell_data)
+        
+        workbook.close()
+        
+        with open('results.xlsx', 'rb') as file:
             bot.send_document(message.chat.id, file)
     else:
         bot.send_message(message.chat.id, "Sizda bu buyruqni bajarish uchun ruxsat yo'q.")
