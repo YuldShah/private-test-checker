@@ -5,7 +5,8 @@ from telebot import types
 from db_manager import *
 from answers import *
 
-API_TOKEN = ''
+API_TOKEN = os.getenv('API_TOKEN', '')
+WEBHOOK_URL = os.getenv('WEBHOOK_URL', '')
 number_of_tests = len(answers_for_test)
 tests = [str(i) for i in range(1, number_of_tests + 1)]
 bot = telebot.TeleBot(API_TOKEN)
@@ -140,5 +141,5 @@ def test_selection_callback_handler(callback):
 if __name__ == "__main__":
     init_db()
     bot.remove_webhook()
-    bot.set_webhook(url='/')
-    app.run()
+    bot.set_webhook(url=f'{WEBHOOK_URL}/')
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
