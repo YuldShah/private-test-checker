@@ -1,54 +1,19 @@
 import os.path
-from flask import Flask, request, redirect, url_for
 import telebot
 from telebot import types
 from db_manager import *
 from answers import *
 
 API_TOKEN = os.getenv('API_TOKEN', '')
-WEBHOOK_URL = os.getenv('WEBHOOK_URL', '')
 number_of_tests = len(answers_for_test)
 tests = [str(i) for i in range(1, number_of_tests + 1)]
 bot = telebot.TeleBot(API_TOKEN)
-app = Flask(__name__)
 answers = {}
-
-
-@app.route('/', methods=['POST'])
-def getMessage():
-    json_string = request.get_data().decode('utf-8')
-    update = telebot.types.Update.de_json(json_string)
-    bot.process_new_updates([update])
-    return '!', 200
-
-
-@app.route('/results')
-def getResults():
-    return get_user_results()
-
-
-@app.route('/tokens')
-def getTokens():
-    return get_user_tokens()
-
-
-@app.route('/generate_tokens/<int:n>')
-def generateTokens(n):
-    generate_tokens(n)
-    return redirect(url_for('getTokens'))
-
-
-@app.route('/add_tokens/<int:last>/<int:n>')
-def addTokens(last, n):
-    add_tokens(last, n)
-    return redirect(url_for('getTokens'))
-
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.send_message(message.chat.id, "Token kalitingizni kiriting (Token kalit olmagan bo'lsangiz @satelbekadmin):")
     set_user_state(message.from_user.id, 'login')
-
 
 @bot.message_handler(func=lambda message: get_user_state(message.from_user.id) == 'login', content_types=['text'])
 def token_handler(message):
@@ -64,7 +29,6 @@ def token_handler(message):
         setup_user_session(message.from_user.id, user_id)
     else:
         bot.send_message(message.chat.id, "Token qabul qilinmadi. Token kiriting:")
-
 
 @bot.callback_query_handler(func=lambda callback: True)
 def test_selection_callback_handler(callback):
@@ -137,9 +101,6 @@ def test_selection_callback_handler(callback):
         markup.add(types.InlineKeyboardButton(text="Testni tugatish", callback_data=f"submit-{topic}"))
         bot.send_message(callback.message.chat.id, f"{topic} testning savolini tanlang:", reply_markup=markup)
 
-
 if __name__ == "__main__":
     init_db()
-    bot.remove_webhook()
-    bot.set_webhook(url=f'{WEBHOOK_URL}/')
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    bot.polling(none_stop=True)
