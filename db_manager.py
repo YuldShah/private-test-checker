@@ -1,14 +1,18 @@
 import redis
 import uuid
+import os
 from datetime import datetime
 
+ht = os.getenv("REDIS_HOST")
+pt = int(os.getenv("REDIS_PORT"))
+passw = os.getenv("REDIS_PASS")
 # Initialize Redis connection
 r = redis.Redis(
-    host='redis-18982.c289.us-west-1-2.ec2.redns.redis-cloud.com',
-    port=18982,
+    host=ht,
+    port=pt,
     decode_responses=True,
     username="default",
-    password="n7zAhUSuxuHM6iZP65UOcdjndmjIHC4m",
+    password=passw,
 )
 
 def init_db():
