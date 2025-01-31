@@ -156,7 +156,7 @@ def test_selection_callback_handler(callback):
                 if topic!=2:
                     bot.send_document(callback.message.chat.id, file)
                 else:
-                    bot.send_document(callback.message.chat.id, file, caption="⚠️ Ochiq savollar: 26 va 29 uchun A belgilang.")
+                    bot.send_document(callback.message.chat.id, file, caption="⚠️ Hammaning diqqatiga 6- va 9- savollarga C javobini belgilaveringlar togri hisoblaymiz.\n26 va 29- savolga A qilib belgilaysizlar\n11-savolda tepada darajada 8 turibdi  yoki B Javob qilinsa togri Deb hisoblaymiz\n30-savol bunisini emas\nNarigi betdagini javobini yuklaysizlar\nOzgina muammo bolibdi uzr.")
             bot.send_message(callback.message.chat.id, f"{topic} testning savolini tanlang:", reply_markup=markup)
         else:
             bot.send_message(callback.message.chat.id, f"Test hozircha yopiq.")
