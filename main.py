@@ -153,7 +153,10 @@ def test_selection_callback_handler(callback):
             markup.add(types.InlineKeyboardButton(text="Testni tugatish", callback_data=f"submit-{topic}"))
             bot.delete_message(callback.message.chat.id, callback.message.message_id)
             with open(f'tests/{topic}.pdf', 'rb') as file:
-                bot.send_document(callback.message.chat.id, file)
+                if topic!=2:
+                    bot.send_document(callback.message.chat.id, file)
+                else:
+                    bot.send_document(callback.message.chat.id, file, caption="⚠️ Ochiq savollar: 26 va 29 uchun A belgilang.")
             bot.send_message(callback.message.chat.id, f"{topic} testning savolini tanlang:", reply_markup=markup)
         else:
             bot.send_message(callback.message.chat.id, f"Test hozircha yopiq.")
